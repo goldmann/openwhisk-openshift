@@ -1,5 +1,10 @@
-FROM openwhisk/action-nodejs-v8:1.2.0
+FROM rhoar-nodejs/nodejs-8:latest
 
-# OpenShift compatibility
-RUN chgrp -R 0 /nodejsAction \
-  && chmod -R g+rwX /nodejsAction
+COPY package.json /opt/app-root/src/
+COPY nodejsActionBase/* /opt/app-root/src/
+COPY nodejsActionBase/src /opt/app-root/src/src
+
+RUN npm install \
+  && npm cache clean --force
+
+CMD ["node", "--expose-gc", "app.js"]
